@@ -5,3 +5,5 @@ WORKDIR  $WORK
 RUN mkdir -p  $WORK
 
 ADD . $WORK
+
+RUN go get -u github.com/golang/dep/...
