@@ -33,7 +33,7 @@ test:
 
 deployment:
   prod:
-    branch: master
+    branch: [master, feature/gcp]
     commands:
       - script/auth-gcloud.sh
       - gcloud docker push $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker > /dev/null
