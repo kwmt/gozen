@@ -36,7 +36,7 @@ deployment:
   prod:
     branch: [master, feature/gcp]
     commands:
+      - sudo gcloud components update
       - script/auth-gcloud.sh
-      - gcloud components update
       - gcloud docker -- push $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker > /dev/null
 
