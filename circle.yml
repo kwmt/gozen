@@ -51,6 +51,8 @@ deployment:
     branch: [master, feature/gcp]
     commands:
       - sudo /opt/google-cloud-sdk/bin/gcloud docker -- push $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker > /dev/null
+      - sudo chown -R ubuntu:ubuntu /home/ubuntu/.kube
+      - kubectl patch deployment gozen -p '{"spec":{"template":{"spec":{"containers":[{"name":"gozen","image":"gcr.io/gozen-project/gozen-docker:'"$CIRCLE_SHA1"'"}]}}}}'
       ## TODO プッシュしたものをぷるして実行したい
       #- eval $(docker-machine env gozen-docker)
 
