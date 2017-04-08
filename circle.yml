@@ -20,6 +20,10 @@ dependencies:
     - docker build -t $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker .
     - mkdir -p ~/docker; docker save $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker > ~/docker/image.tar
     - docker images
+    - |
+      curl -L https://github.com/docker/machine/releases/download/v0.10.0/docker-machine-`uname -s`-`uname -m` >/tmp/docker-machine
+      chmod +x /tmp/docker-machine
+      sudo cp /tmp/docker-machine /usr/local/bin/docker-machine
     - docker-machine ls
 
 database:
