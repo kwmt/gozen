@@ -20,6 +20,7 @@ dependencies:
     - docker build -t $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker .
     - mkdir -p ~/docker; docker save $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker > ~/docker/image.tar
     - docker images
+    - docker-machine ls
 
 database:
   override:
@@ -38,4 +39,6 @@ deployment:
       - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update
       - script/auth-gcloud.sh
       - sudo /opt/google-cloud-sdk/bin/gcloud docker -- push $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker > /dev/null
+      ## TODO プッシュしたものをぷるして実行したい
+      #- eval $(docker-machine env gozen-docker)
 
