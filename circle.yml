@@ -5,7 +5,6 @@ machine:
     CLOUDSDK_PYTHON_SITEPACKAGES: 1
     CLOUDSDK_COMPUTE_ZONE: us-central1-a
     CLOUDSDK_CORE_PROJECT: $GCLOUD_PROJECTID
-    PATH: $PATH:/home/ubuntu/google-cloud-sdk/bin
   python:
     version: 2.7.3
   services:
@@ -36,7 +35,7 @@ deployment:
   prod:
     branch: [master, feature/gcp]
     commands:
-      - sudo gcloud components update
+      - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update
       - script/auth-gcloud.sh
-      - gcloud docker -- push $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker > /dev/null
+      - sudo /opt/google-cloud-sdk/bin/gcloud docker -- push $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker > /dev/null
 
