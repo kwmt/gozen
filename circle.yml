@@ -5,6 +5,7 @@ machine:
     CLOUDSDK_PYTHON_SITEPACKAGES: 1
     CLOUDSDK_COMPUTE_ZONE: us-central1-a
     CLOUDSDK_CORE_PROJECT: $GCLOUD_PROJECTID
+    CLUSTER_NAME: gozen-project-cluster
   python:
     version: 2.7.3
   services:
@@ -17,7 +18,8 @@ dependencies:
   override:
     # - script/ensure-gcloud-installed.sh
     - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
-    - docker build -t $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker .
+    - docker build -t $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker:$CIRCLE_SHA1 .
+    - docker tag $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker:$CIRCLE_SHA1 $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker:latest
     - mkdir -p ~/docker; docker save $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker > ~/docker/image.tar
     - docker images
     - |
@@ -25,6 +27,13 @@ dependencies:
       chmod +x /tmp/docker-machine
       sudo cp /tmp/docker-machine /usr/local/bin/docker-machine
     - docker-machine ls
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update
+    - script/auth-gcloud.sh
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update kubectl
+    - sudo /opt/google-cloud-sdk/bin/gcloud config set project $PROJECT_NAME
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet config set container/cluster $CLUSTER_NAME
+    - sudo /opt/google-cloud-sdk/bin/gcloud config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet container clusters get-credentials $CLUSTER_NAME
 
 database:
   override:
@@ -40,8 +49,6 @@ deployment:
   prod:
     branch: [master, feature/gcp]
     commands:
-      - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update
-      - script/auth-gcloud.sh
       - sudo /opt/google-cloud-sdk/bin/gcloud docker -- push $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker > /dev/null
       ## TODO プッシュしたものをぷるして実行したい
       #- eval $(docker-machine env gozen-docker)
