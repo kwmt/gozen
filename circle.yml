@@ -19,7 +19,7 @@ dependencies:
     # - script/ensure-gcloud-installed.sh
     - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
     - docker build -t $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker:$CIRCLE_SHA1 .
-    - docker tag $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker:$CIRCLE_SHA1 $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker:latest
+    - docker tag -f $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker:$CIRCLE_SHA1 $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker:latest
     - mkdir -p ~/docker; docker save $EXTERNAL_REGISTRY_ENDPOINT/gozen-docker > ~/docker/image.tar
     - docker images
     - |
